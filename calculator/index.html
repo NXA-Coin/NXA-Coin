@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NXA-Coin — Token Allocation Calculator</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          nxa: {
+            bg:    '#0a0a14',
+            panel: '#11112a',
+            card:  '#181838',
+            line:  '#2a2a55',
+            text:  '#f1f1ff',
+            muted: '#8a8ab8',
+            gold:  '#f5c518',
+            goldd: '#c79f00',
+            accent:'#7c5cff',
+            green: '#22c55e',
+            red:   '#ef4444',
+          }
+        },
+        fontFamily: {
+          display: ['Inter', 'ui-sans-serif', 'system-ui'],
+        }
+      }
+    }
+  }
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  body {
+    font-family: 'Inter', sans-serif;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(124,92,255,0.10), transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(245,197,24,0.08), transparent 45%),
+      #0a0a14;
+    color: #f1f1ff;
+    min-height: 100vh;
+  }
+  .card {
+    background: linear-gradient(180deg, rgba(24,24,56,0.85), rgba(17,17,42,0.85));
+    border: 1px solid #2a2a55;
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
+  }
+  .gold-text {
+    background: linear-gradient(135deg, #f5c518, #c79f00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .preset-btn {
+    transition: all 0.15s ease;
+  }
+  .preset-btn:hover { transform: translateY(-1px); }
+  .preset-btn.active {
+    background: linear-gradient(135deg, #f5c518, #c79f00);
+    color: #0a0a14;
+    border-color: #f5c518;
+    font-weight: 700;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .glow {
+    box-shadow: 0 0 32px rgba(245, 197, 24, 0.15);
+  }
+  @media print {
+    body { background: white !important; color: black !important; }
+    .no-print { display: none !important; }
+    .card { background: white !important; border: 1px solid #ccc !important; }
+    .gold-text { -webkit-text-fill-color: #c79f00 !important; color: #c79f00 !important; }
+  }
+</style>
+</head>
+<body class="font-display">
+
+<div class="max-w-7xl mx-auto px-6 py-10">
+
+  <!-- ── Header ── -->
+  <header class="mb-10 flex items-center justify-between flex-wrap gap-4">
+    <div class="flex items-center gap-5">
+      <img src="../branding/nxa-logo.png" alt="NXA-Coin Logo" class="w-24 h-24 object-contain drop-shadow-[0_4px_20px_rgba(245,197,24,0.25)]" />
+      <div>
+        <h1 class="text-5xl font-extrabold tracking-tight">
+          <span class="gold-text">NXA-Coin</span>
+          <span class="text-nxa-text">Allocation Calculator</span>
+        </h1>
+        <p class="text-nxa-muted mt-2 text-lg">Model investor deals across every price stage — instantly.</p>
+      </div>
+    </div>
+    <div class="text-right text-sm text-nxa-muted no-print">
+      <div>Founder: <span class="text-nxa-text font-semibold">Leon Kasirai Kujinga</span></div>
+      <div>Confidential — Internal Use</div>
+      <button onclick="window.print()" class="mt-3 px-4 py-2 rounded-lg bg-nxa-card border border-nxa-line hover:border-nxa-gold transition">🖨 Print Deal Sheet</button>
+    </div>
+  </header>
+
+  <!-- ── Price Presets ── -->
+  <section class="card p-6 mb-6 glow">
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+      <span class="text-nxa-gold">💰</span> Price Stage
+    </h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3" id="presetButtons">
+      <!-- presets injected by JS -->
+    </div>
+    <div class="mt-4 flex items-center gap-3">
+      <label class="text-nxa-muted text-sm">Custom price ($/NXA):</label>
+      <input id="customPrice" type="number" step="0.0001" value="0.005"
+        class="bg-nxa-bg border border-nxa-line rounded-lg px-3 py-2 w-40 text-nxa-text focus:border-nxa-gold focus:outline-none" />
+    </div>
+  </section>
+
+  <!-- ── Two-Way Calculator ── -->
+  <section class="grid md:grid-cols-2 gap-6 mb-6">
+
+    <!-- USD → NXA -->
+    <div class="card p-6">
+      <h3 class="text-xl font-bold mb-4">
+        <span class="gold-text">USD → NXA</span>
+      </h3>
+      <p class="text-nxa-muted text-sm mb-4">How much NXA does an investor get for a given USD amount?</p>
+      <label class="block text-sm text-nxa-muted mb-1">Investment (USD)</label>
+      <input id="usdInput" type="number" value="10000" step="100"
+        class="w-full bg-nxa-bg border border-nxa-line rounded-lg px-4 py-3 text-2xl font-bold text-nxa-text focus:border-nxa-gold focus:outline-none" />
+
+      <div class="mt-5 p-4 rounded-lg bg-nxa-bg border border-nxa-gold/40">
+        <div class="text-nxa-muted text-xs uppercase tracking-wide">Receives</div>
+        <div class="text-3xl font-extrabold gold-text mt-1" id="nxaOutput">2,000,000 NXA</div>
+        <div class="text-nxa-muted text-sm mt-1" id="nxaOutputDetail">at $0.005 / NXA</div>
+      </div>
+    </div>
+
+    <!-- NXA → USD -->
+    <div class="card p-6">
+      <h3 class="text-xl font-bold mb-4">
+        <span class="gold-text">NXA → USD</span>
+      </h3>
+      <p class="text-nxa-muted text-sm mb-4">What's a given NXA holding worth at the current price?</p>
+      <label class="block text-sm text-nxa-muted mb-1">NXA quantity</label>
+      <input id="nxaInput" type="number" value="1000000" step="1000"
+        class="w-full bg-nxa-bg border border-nxa-line rounded-lg px-4 py-3 text-2xl font-bold text-nxa-text focus:border-nxa-gold focus:outline-none" />
+
+      <div class="mt-5 p-4 rounded-lg bg-nxa-bg border border-nxa-gold/40">
+        <div class="text-nxa-muted text-xs uppercase tracking-wide">Worth</div>
+        <div class="text-3xl font-extrabold gold-text mt-1" id="usdOutput">$5,000.00</div>
+        <div class="text-nxa-muted text-sm mt-1" id="usdOutputDetail">at $0.005 / NXA</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Investor Scenarios Table ── -->
+  <section class="card p-6 mb-6">
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+      <h2 class="text-xl font-bold flex items-center gap-2">
+        <span class="text-nxa-gold">📊</span> Investor Scenarios — Growth Projection
+      </h2>
+      <span class="text-xs text-nxa-muted">All values shown at entry price + projected exit value at each milestone</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-left text-nxa-muted border-b border-nxa-line">
+            <th class="py-3 px-2">Investment</th>
+            <th class="py-3 px-2">Entry Price</th>
+            <th class="py-3 px-2">NXA Allocation</th>
+            <th class="py-3 px-2">@ $0.02 (M1)</th>
+            <th class="py-3 px-2">@ $0.10 (M3)</th>
+            <th class="py-3 px-2">@ $0.50 (M6)</th>
+            <th class="py-3 px-2">@ $1.00 (M12)</th>
+          </tr>
+        </thead>
+        <tbody id="scenarioTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── Tokenomics Tracker ── -->
+  <section class="grid md:grid-cols-2 gap-6 mb-6">
+
+    <!-- Supply Breakdown -->
+    <div class="card p-6">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <span class="text-nxa-gold">🥧</span> Supply Breakdown (1,000,000,000 NXA)
+      </h2>
+      <div id="supplyChart" class="space-y-3"></div>
+    </div>
+
+    <!-- Early Investor Pool Tracker -->
+    <div class="card p-6">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <span class="text-nxa-gold">🎯</span> Early Investor Pool Tracker
+      </h2>
+      <p class="text-nxa-muted text-sm mb-4">100,000,000 NXA reserved for early investors. Log allocations below to track remaining capacity.</p>
+
+      <div class="mb-4">
+        <div class="flex justify-between text-sm mb-1">
+          <span class="text-nxa-muted">Used</span>
+          <span class="font-semibold" id="poolUsedLabel">0 / 100,000,000 NXA</span>
+        </div>
+        <div class="w-full bg-nxa-bg rounded-full h-3 border border-nxa-line">
+          <div id="poolBar" class="h-full rounded-full bg-gradient-to-r from-nxa-gold to-nxa-goldd transition-all" style="width: 0%"></div>
+        </div>
+        <div class="text-xs text-nxa-muted mt-1"><span id="poolRemaining">100,000,000</span> NXA remaining</div>
+      </div>
+
+      <div class="space-y-2 mb-4 max-h-48 overflow-y-auto" id="investorLog">
+        <div class="text-nxa-muted text-sm italic">No investors logged yet.</div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2 no-print">
+        <input id="invName" type="text" placeholder="Name" class="bg-nxa-bg border border-nxa-line rounded px-2 py-1.5 text-sm" />
+        <input id="invUsd" type="number" placeholder="USD" class="bg-nxa-bg border border-nxa-line rounded px-2 py-1.5 text-sm" />
+        <button onclick="addInvestor()" class="bg-nxa-gold hover:bg-nxa-goldd text-nxa-bg font-semibold rounded text-sm transition">+ Log</button>
+      </div>
+      <button onclick="clearInvestors()" class="mt-2 text-xs text-nxa-muted hover:text-nxa-red transition no-print">Clear all</button>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="text-center text-nxa-muted text-xs mt-12">
+    <div class="border-t border-nxa-line pt-6">
+      NXA-Coin Allocation Calculator · Built for Leon Kasirai Kujinga · <span class="text-nxa-gold">Founder &amp; CEO, Nxvana AI</span>
+      <div class="mt-2">All projections are estimates. Actual NXA value depends on market conditions at time of trade.</div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// ════════════════════════════════════════════════════
+// NXA-Coin Allocation Calculator — Vanilla JS
+// ════════════════════════════════════════════════════
+
+const PRESETS = [
+  { label: "Launch",           price: 0.005, tag: "Public DEX launch on Raydium" },
+  { label: "Month 1",          price: 0.02,  tag: "After initial social traction" },
+  { label: "Month 3",          price: 0.10,  tag: "Post-CEX listing target" },
+  { label: "Month 6",          price: 0.50,  tag: "Sustained engagement scenario" },
+  { label: "Month 12",         price: 1.00,  tag: "$1B market cap milestone" },
+];
+
+const TOKENOMICS = [
+  { label: "Public Sale (Liquidity Pool)", amount: 400_000_000, color: "#f5c518", pct: 40 },
+  { label: "Founder & Development",        amount: 200_000_000, color: "#7c5cff", pct: 20 },
+  { label: "Ecosystem & Rewards",          amount: 150_000_000, color: "#22c55e", pct: 15 },
+  { label: "Marketing & Partnerships",     amount: 100_000_000, color: "#06b6d4", pct: 10 },
+  { label: "Early Investors",              amount: 100_000_000, color: "#ec4899", pct: 10 },
+  { label: "Reserve / Treasury",           amount: 50_000_000,  color: "#a3a3a3", pct: 5  },
+];
+
+const INVESTOR_POOL = 100_000_000;
+const SCENARIO_AMOUNTS = [5000, 10000, 15000, 25000, 50000];
+
+let currentPrice = 0.005;
+let investors = JSON.parse(localStorage.getItem("nxaInvestors") || "[]");
+
+// ── Helpers ──
+const fmt   = n => n.toLocaleString("en-US", { maximumFractionDigits: 0 });
+const fmt2  = n => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtUsd = n => "$" + fmt2(n);
+const usdToNxa = (usd, price) => usd / price;
+const nxaToUsd = (nxa, price) => nxa * price;
+
+// ── Preset Buttons ──
+function renderPresets() {
+  const container = document.getElementById("presetButtons");
+  container.innerHTML = "";
+  PRESETS.forEach(p => {
+    const btn = document.createElement("button");
+    btn.className = "preset-btn bg-nxa-bg border border-nxa-line rounded-lg px-3 py-3 text-sm hover:border-nxa-gold";
+    btn.innerHTML = `
+      <div class="font-semibold">${p.label}</div>
+      <div class="text-nxa-gold font-bold text-lg">$${p.price}</div>
+      <div class="text-nxa-muted text-xs mt-1">${p.tag}</div>
+    `;
+    btn.onclick = () => {
+      currentPrice = p.price;
+      document.getElementById("customPrice").value = p.price;
+      document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      recalc();
+    };
+    if (p.price === currentPrice) btn.classList.add("active");
+    container.appendChild(btn);
+  });
+}
+
+// ── Tokenomics Pie ──
+function renderTokenomics() {
+  const container = document.getElementById("supplyChart");
+  container.innerHTML = "";
+  TOKENOMICS.forEach(t => {
+    const row = document.createElement("div");
+    row.innerHTML = `
+      <div class="flex justify-between text-sm mb-1">
+        <span class="flex items-center gap-2">
+          <span class="inline-block w-3 h-3 rounded-sm" style="background:${t.color}"></span>
+          <span class="text-nxa-text">${t.label}</span>
+        </span>
+        <span class="text-nxa-muted">${t.pct}% — ${fmt(t.amount)}</span>
+      </div>
+      <div class="w-full bg-nxa-bg rounded-full h-2 border border-nxa-line">
+        <div class="h-full rounded-full" style="width:${t.pct}%; background:${t.color}"></div>
+      </div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+// ── Scenario Table ──
+function renderScenarios() {
+  const tbody = document.getElementById("scenarioTable");
+  tbody.innerHTML = "";
+  SCENARIO_AMOUNTS.forEach(usd => {
+    const nxa = usdToNxa(usd, currentPrice);
+    const row = document.createElement("tr");
+    row.className = "border-b border-nxa-line/50 hover:bg-nxa-card/50 transition";
+    row.innerHTML = `
+      <td class="py-3 px-2 font-bold text-nxa-text">${fmtUsd(usd)}</td>
+      <td class="py-3 px-2 text-nxa-gold">$${currentPrice}</td>
+      <td class="py-3 px-2 font-semibold">${fmt(nxa)} NXA</td>
+      <td class="py-3 px-2 text-nxa-green">${fmtUsd(nxa * 0.02)}</td>
+      <td class="py-3 px-2 text-nxa-green">${fmtUsd(nxa * 0.10)}</td>
+      <td class="py-3 px-2 text-nxa-green font-semibold">${fmtUsd(nxa * 0.50)}</td>
+      <td class="py-3 px-2 text-nxa-gold font-bold">${fmtUsd(nxa * 1.00)}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// ── Two-Way Calc ──
+function recalc() {
+  const usd = parseFloat(document.getElementById("usdInput").value) || 0;
+  const nxa = parseFloat(document.getElementById("nxaInput").value) || 0;
+  const price = currentPrice;
+
+  document.getElementById("nxaOutput").textContent = fmt(usdToNxa(usd, price)) + " NXA";
+  document.getElementById("nxaOutputDetail").textContent = `at $${price} / NXA`;
+  document.getElementById("usdOutput").textContent = fmtUsd(nxaToUsd(nxa, price));
+  document.getElementById("usdOutputDetail").textContent = `at $${price} / NXA`;
+
+  renderScenarios();
+}
+
+// ── Investor Log ──
+function renderInvestors() {
+  const log = document.getElementById("investorLog");
+  const used = investors.reduce((s, i) => s + i.nxa, 0);
+  const remaining = Math.max(0, INVESTOR_POOL - used);
+  const pct = Math.min(100, (used / INVESTOR_POOL) * 100);
+
+  document.getElementById("poolUsedLabel").textContent = `${fmt(used)} / ${fmt(INVESTOR_POOL)} NXA`;
+  document.getElementById("poolRemaining").textContent = fmt(remaining);
+  document.getElementById("poolBar").style.width = pct + "%";
+
+  if (investors.length === 0) {
+    log.innerHTML = '<div class="text-nxa-muted text-sm italic">No investors logged yet.</div>';
+    return;
+  }
+  log.innerHTML = "";
+  investors.forEach((inv, idx) => {
+    const row = document.createElement("div");
+    row.className = "flex items-center justify-between bg-nxa-bg border border-nxa-line rounded px-3 py-2 text-sm";
+    row.innerHTML = `
+      <div>
+        <span class="font-semibold">${inv.name}</span>
+        <span class="text-nxa-muted ml-2">${fmtUsd(inv.usd)} @ $${inv.price}</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-nxa-gold font-semibold">${fmt(inv.nxa)} NXA</span>
+        <button onclick="removeInvestor(${idx})" class="text-nxa-red hover:text-red-300 no-print">×</button>
+      </div>
+    `;
+    log.appendChild(row);
+  });
+}
+
+function addInvestor() {
+  const name = document.getElementById("invName").value.trim();
+  const usd = parseFloat(document.getElementById("invUsd").value);
+  if (!name || !usd || usd <= 0) {
+    alert("Enter a name and a positive USD amount.");
+    return;
+  }
+  const nxa = usdToNxa(usd, currentPrice);
+  investors.push({ name, usd, price: currentPrice, nxa });
+  localStorage.setItem("nxaInvestors", JSON.stringify(investors));
+  document.getElementById("invName").value = "";
+  document.getElementById("invUsd").value = "";
+  renderInvestors();
+}
+
+function removeInvestor(idx) {
+  investors.splice(idx, 1);
+  localStorage.setItem("nxaInvestors", JSON.stringify(investors));
+  renderInvestors();
+}
+
+function clearInvestors() {
+  if (!confirm("Clear all logged investors?")) return;
+  investors = [];
+  localStorage.setItem("nxaInvestors", "[]");
+  renderInvestors();
+}
+
+// ── Event listeners ──
+document.getElementById("usdInput").addEventListener("input", recalc);
+document.getElementById("nxaInput").addEventListener("input", recalc);
+document.getElementById("customPrice").addEventListener("input", e => {
+  const v = parseFloat(e.target.value);
+  if (!isNaN(v) && v > 0) {
+    currentPrice = v;
+    document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active"));
+    recalc();
+  }
+});
+
+// ── Init ──
+renderPresets();
+renderTokenomics();
+renderInvestors();
+recalc();
+</script>
+
+</body>
+</html>

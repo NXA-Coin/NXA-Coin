@@ -1,0 +1,44 @@
+{
+  "name": "NXA-Coin",
+  "symbol": "NXA",
+  "description": "NXA-Coin (NXA) is the utility token of the Nxvana AI ecosystem — powering autonomous agent-to-agent skill exchange, content licensing, and the AI Agent Society. Logo design inspired by kintsugi: broken, mended in gold, made stronger.",
+  "image": "https://raw.githubusercontent.com/NXA-Coin/nxa-coin/main/branding/nxa-logo.png",
+  "external_url": "https://x.com/NxvanaAI",
+  "local_logo_path": "branding/nxa-logo.png",
+  "logo_designer": "Leon Kasirai Kujinga",
+  "attributes": [
+    {
+      "trait_type": "Network",
+      "value": "Solana"
+    },
+    {
+      "trait_type": "Type",
+      "value": "Utility Token"
+    },
+    {
+      "trait_type": "Ecosystem",
+      "value": "Nxvana AI"
+    },
+    {
+      "trait_type": "Total Supply",
+      "value": "1,000,000,000"
+    },
+    {
+      "trait_type": "Supply Locked",
+      "value": "Yes (mint authority revoked)"
+    },
+    {
+      "trait_type": "Brand Aesthetic",
+      "value": "Kintsugi — gold + black"
+    }
+  ],
+  "properties": {
+    "category": "fungible",
+    "creators": [
+      {
+        "address": "G4KKx3KHndrzQG38FGG7XRt2iBcN7geRVsz7B3jcNBAD",
+        "share": 100
+      }
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "network": "mainnet-beta",
+  "rpcUrl": "https://api.mainnet-beta.solana.com",
+  "deployerKeypairPath": "./keys/deployer.json",
+  "token": {
+    "name": "NXA-Coin",
+    "symbol": "NXA",
+    "decimals": 9,
+    "totalSupply": 1000000000,
+    "description": "NXA-Coin (NXA) is the utility token of the Nxvana AI ecosystem — powering autonomous agent-to-agent skill exchange, content licensing, and the AI Agent Society.",
+    "metadataUri": "https://raw.githubusercontent.com/NXA-Coin/nxa-coin/main/metadata/nxa-token.json"
+  },
+  "state": {
+    "deployerPublicKey": "G4KKx3KHndrzQG38FGG7XRt2iBcN7geRVsz7B3jcNBAD",
+    "mintAddress": "",
+    "associatedTokenAccount": "",
+    "supplyMinted": false,
+    "mintAuthorityRevoked": false,
+    "freezeAuthorityRevoked": false,
+    "metadataAdded": false,
+    "previousAttempts": [
+      {
+        "network": "devnet",
+        "mintAddress": "8mYhwQoboQ1PGe9p34j7BTSEMj75RPxqJeoMLj3hGXqW",
+        "outcome": "abandoned — locked before metadata, lesson learned",
+        "explorerUrl": "https://explorer.solana.com/address/8mYhwQoboQ1PGe9p34j7BTSEMj75RPxqJeoMLj3hGXqW?cluster=devnet"
+      },
+      {
+        "network": "devnet",
+        "mintAddress": "99h7kCjkTU7KEcSuSbN8m1W7uncWZwQ7TrpZQ2oCJNJF",
+        "associatedTokenAccount": "GUAkNBp3eV3hfY1CyHPeaPeuEdm8eizcuhqaU4UeBca5",
+        "outcome": "successful devnet deployment — full lifecycle (mint, supply, metadata, lock, verify)",
+        "explorerUrl": "https://explorer.solana.com/address/99h7kCjkTU7KEcSuSbN8m1W7uncWZwQ7TrpZQ2oCJNJF?cluster=devnet"
+      }
+    ]
+  }
+}

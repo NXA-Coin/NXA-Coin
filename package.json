@@ -1,0 +1,27 @@
+{
+  "name": "nxa-coin",
+  "version": "1.0.0",
+  "description": "NXA-Coin (NXA) — Utility token of the Nxvana AI ecosystem on Solana",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "1:keypair":    "node scripts/1-generate-keypair.js",
+    "2:airdrop":    "node scripts/2-airdrop.js",
+    "3:create":     "node scripts/3-create-token.js",
+    "4:mint":       "node scripts/4-mint-supply.js",
+    "5:metadata":   "node scripts/5-add-metadata.js",
+    "6:lock":       "node scripts/6-lock-authorities.js",
+    "verify":       "node scripts/verify.js"
+  },
+  "author": "Leon Kasirai Kujinga",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@metaplex-foundation/mpl-token-metadata": "^3.4.0",
+    "@metaplex-foundation/umi": "^0.9.2",
+    "@metaplex-foundation/umi-bundle-defaults": "^0.9.2",
+    "@solana/spl-token": "^0.4.9",
+    "@solana/web3.js": "^1.95.4",
+    "bs58": "^6.0.0",
+    "dotenv": "^16.4.5"
+  }
+}
